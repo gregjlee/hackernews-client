@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { sortBy } from 'lodash';
 import classNames from 'classnames';
-import './App.css';
+import { 
+  Navbar, 
+  NavItem,
+  Nav,
+ } from 'react-bootstrap';
+import './index.css';
+import Home from './Home'
 
 const DEFAULT_QUERY = 'redux';
 const DEFAULT_HPP = '100';
@@ -42,7 +48,7 @@ const updateSearchTopStoriesState = (hits, page) => (prevState) => {
   };
 };
 
-class App extends Component {
+class Main extends Component {
   _isMounted = false;
 
   constructor(props) {
@@ -77,7 +83,12 @@ class App extends Component {
 
   fetchSearchTopStories(searchTerm, page = 0) {
     this.setState({ isLoading: true });
-
+    axios('http://localhost:5000/api/users')
+      .then(result => {
+        console.log(JSON.stringify(result, null, 4));
+      })
+      .catch(error => console.log(error));
+    // axios
     axios(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(result => this.setSearchTopStories(result.data))
       .catch(error => this._isMounted && this.setState({ error }));
@@ -145,10 +156,50 @@ class App extends Component {
       results[searchKey] &&
       results[searchKey].hits
     ) || [];
-
+      //Title
+      //home, explore
+      //search
+      //messages, profile, logout
     return (
+      
       <div className="page">
-        <div className="interactions">
+      <Navbar collapseOnSelect>
+        <Navbar.Header>
+          <Navbar.Brand>
+            Title
+          </Navbar.Brand>
+          <Navbar.Toggle />
+        </Navbar.Header>
+        <Navbar.Collapse>
+          <Nav>
+            <NavItem>
+              Home
+            </NavItem>
+            <NavItem>
+              Explore
+            </NavItem>
+          </Nav>
+          <Nav>
+            <form className='navbar-form' action="">
+              <input type='text' placeholder='search' />
+            </form>
+          </Nav>
+
+          <Nav pullRight>
+            <NavItem>
+              Messages
+            </NavItem>
+            <NavItem>
+              Profile
+            </NavItem>
+            <NavItem>
+              Logout
+            </NavItem>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+      <Home />
+        {/* <div className="interactions">
           <Search
             value={searchTerm}
             onChange={this.onSearchChange}
@@ -156,8 +207,8 @@ class App extends Component {
           >
             Search
           </Search>
-        </div>
-        { error
+        </div> */}
+        {/* { error
           ? <div className="interactions">
             <p>Something went wrong.</p>
           </div>
@@ -172,7 +223,7 @@ class App extends Component {
             onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
             More
           </ButtonWithLoading>
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -350,4 +401,4 @@ export {
   Table,
 };
 
-export default App;
+export default Main;
